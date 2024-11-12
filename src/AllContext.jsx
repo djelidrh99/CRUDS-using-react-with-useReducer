@@ -4,6 +4,7 @@ import reducer from "./reducer";
 
 const crudsListContext = createContext([])
 const dispatchContext = createContext("")
+export const handelEditeContext = createContext(()=>{}) 
 /* eslint-disable react/prop-types */
 
 export default function AllProvider ({children}) {
@@ -21,3 +22,4 @@ export default function AllProvider ({children}) {
 
 export const useCruds = ()=>{ return useContext(crudsListContext)}
 export const useDispatch = ()=>{ return useContext(dispatchContext)}
+export const useHandelEdite = ()=>{return useContext(handelEditeContext)}

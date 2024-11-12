@@ -2,12 +2,14 @@ import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
 import Button from '@mui/material/Button';
 import { useCruds,useDispatch } from './AllContext';
+import { useHandelEdite } from './AllContext';
 
 
 
 export default function CrudsItem() {
     const crudsListItem  =useCruds()
     const dispatch = useDispatch()
+    const editeProduct =useHandelEdite()
 
 
 
@@ -28,7 +30,7 @@ dispatch({type:"delete",payload:Id})
                     <TableCell >{cruds.Total}</TableCell>
                     <TableCell >{cruds.Category}</TableCell>
                     <TableCell >
-                    <Button className="bg-purple-900 " variant="contained">Update</Button>
+                    <Button onClick={()=>{editeProduct(cruds)}} className="bg-purple-900 " variant="contained">Update</Button>
                     </TableCell>
                     <TableCell >
                     <Button onClick={()=>{handelDelete(cruds.id)}} className="bg-purple-900 " variant="contained">Delete</Button>

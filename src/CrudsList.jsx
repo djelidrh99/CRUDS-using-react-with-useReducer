@@ -5,8 +5,9 @@ import Grid from "@mui/material/Grid2";
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import  ProductTable from './Table'
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { useDispatch } from "./AllContext";
+import { handelEditeContext } from "./AllContext";
 
 
 export default function CrudsList() {
@@ -18,13 +19,33 @@ export default function CrudsList() {
     const [countInput,setcountInput] =useState("")
     const [categoryInput,setCategoryInput] =useState("")
     const [searchInput,setSearchInput] =useState("")
+    const [searchMethod,setSearchMetod]=useState("searchbytitle")
+
+    const [updateId ,setUpdateId]=useState("")
+    const [state,setState] =useState("Create")
 
     const dispatch = useDispatch()
     
-console.log(searchInput)
+    useEffect(()=>{
+        if(localStorage.getItem("cruds")) {
+            dispatch({type:"storage"})
+        }
+    },[])
+
 function addNewProduct () {
-    if(countInput>0) {
-        for(let i=0;i<countInput;i++) {
+    if(state === "Create") {
+        if(countInput>0) {
+            for(let i=0;i<countInput;i++) {
+                dispatch({type:"add",payload:{
+                    title:titleInput,
+                    price:priceInput,
+                    tax:taxInput,
+                    ads:adsInput,
+                    discount:discountInput,
+                    category:categoryInput
+                   }})
+            }
+        }else {
             dispatch({type:"add",payload:{
                 title:titleInput,
                 price:priceInput,
@@ -34,20 +55,54 @@ function addNewProduct () {
                 category:categoryInput
                }})
         }
-    }else {
-        dispatch({type:"add",payload:{
+    } else {
+        dispatch({type:"update",payload:{
             title:titleInput,
             price:priceInput,
             tax:taxInput,
             ads:adsInput,
             discount:discountInput,
-            category:categoryInput
+            category:categoryInput,
+            updateId:updateId
            }})
+           setState("Create")
     }
+   
+
+    setTitleInput("")
+    setPriceInput("")
+    setAdsInput("")
+    setTaxeInput("")
+    setDiscountInput("")
+    setCategoryInput("")
    
   
 }
+
+function editeProduct(value) {
+    setTitleInput(value.title)
+    setPriceInput(value.Price)
+    setAdsInput(value.Ads)
+    setTaxeInput(value.Tax)
+    setDiscountInput(value.Discount)
+    setCategoryInput(value.Category)
+    console.log("done")
+    console.log(value.Price)
+    setState("Update")
+    setUpdateId(value.id)
+}
+
+function handelSearch (e) {
+    setSearchInput(e.target.value)
+    if (searchMethod === "searchbytitle") {
+    dispatch({type:"searchByTitle",payload:searchInput})
+    } else {
+        dispatch({type:"searchByCategory",payload:searchInput})
+    }
+}
+
   return (
+    <handelEditeContext.Provider value={editeProduct}> 
 
     <div className="bg-gray-800 text-white">
       <Container maxWidth="lg">
@@ -63,37 +118,37 @@ function addNewProduct () {
           <div>
             <Grid container spacing={2}>
               <Grid   size={12}>
-                  <TextField onChange={(e)=>{setTitleInput(e.target.value)}}  color="secondary" sx={{backgroundColor:"white"}} className="w-full" id="filled-basic" label="Title" variant="filled" />
+                  <TextField value={titleInput} onChange={(e)=>{setTitleInput(e.target.value)}}  color="secondary" sx={{backgroundColor:"white"}} className="w-full" id="filled-basic" label="Title" variant="filled" />
               </Grid>
               <Grid size={3}>
-                   <TextField type="number" onChange={(e)=>{setPriceInput(e.target.value)}}  color="secondary" sx={{backgroundColor:"white"}} className="w-full" id="filled-basic" label="Price" variant="filled" />
+                   <TextField value={priceInput} type="number" onChange={(e)=>{setPriceInput(e.target.value)}}  color="secondary" sx={{backgroundColor:"white"}} className="w-full" id="filled-basic" label="Price" variant="filled" />
               </Grid>
               <Grid size={3}>
-                   <TextField type="number" onChange={(e)=>{setTaxeInput(e.target.value)}}  color="secondary" sx={{backgroundColor:"white"}} className="w-full" id="filled-basic" label="Tax" variant="filled" />
+                   <TextField value={taxInput} type="number" onChange={(e)=>{setTaxeInput(e.target.value)}}  color="secondary" sx={{backgroundColor:"white"}} className="w-full" id="filled-basic" label="Tax" variant="filled" />
               </Grid>
               <Grid size={3}>
-                   <TextField type="number" onChange={(e)=>{setAdsInput(e.target.value)}}  color="secondary" sx={{backgroundColor:"white"}} className="w-full" id="filled-basic" label="Ads" variant="filled" />
+                   <TextField value={adsInput} type="number" onChange={(e)=>{setAdsInput(e.target.value)}}  color="secondary" sx={{backgroundColor:"white"}} className="w-full" id="filled-basic" label="Ads" variant="filled" />
               </Grid>
               <Grid size={3}>           
-                   <TextField type="number" onChange={(e)=>{setDiscountInput(e.target.value)}}  color="secondary" sx={{backgroundColor:"white"}} className="w-full" id="filled-basic" label="Discount" variant="filled" />
+                   <TextField value={discountInput} type="number" onChange={(e)=>{setDiscountInput(e.target.value)}}  color="secondary" sx={{backgroundColor:"white"}} className="w-full" id="filled-basic" label="Discount" variant="filled" />
               </Grid>
               <Grid size={12}>           
-                   <TextField type="number" onChange={(e)=>{setcountInput(e.target.value)}}  color="secondary" sx={{backgroundColor:"white"}} className="w-full" id="filled-basic" label="Count" variant="filled" />
+                   <TextField disabled={state ==="Create"?false:true} value={countInput} type="number" onChange={(e)=>{setcountInput(e.target.value)}}  color="secondary" sx={{backgroundColor:"white"}} className="w-full" id="filled-basic" label="Count" variant="filled" />
               </Grid>
               <Grid size={12}>           
-                   <TextField onChange={(e)=>{setCategoryInput(e.target.value)}}  color="secondary" sx={{backgroundColor:"white"}} className="w-full" id="filled-basic" label="Category" variant="filled" />
+                   <TextField value={categoryInput} onChange={(e)=>{setCategoryInput(e.target.value)}}  color="secondary" sx={{backgroundColor:"white"}} className="w-full" id="filled-basic" label="Category" variant="filled" />
               </Grid>
               <Grid size={12}>           
-              <Button onClick={addNewProduct} className="bg-purple-900 w-full h-[56px] text-xl" variant="contained">Create</Button>
+              <Button onClick={addNewProduct} className="bg-purple-900 w-full h-[56px] text-xl" variant="contained">{state}</Button>
               </Grid>
               <Grid size={12}>           
-              <TextField onChange={(e)=>{setSearchInput(e.target.value)}}  color="secondary" sx={{backgroundColor:"white"}} className="w-full" id="filled-basic" label="Search a product" variant="filled" />
+              <TextField value={searchInput} onChange={handelSearch}  color="secondary" sx={{backgroundColor:"white"}} className="w-full" id="filled-basic" label="Search a product" variant="filled" />
               </Grid>
               <Grid size={6}>           
-              <Button className="bg-purple-900 w-full h-[56px] text-xl" variant="contained">Search by Title</Button>
+              <Button onClick={()=>{setSearchMetod("searchbytitle")}} className="bg-purple-900 w-full h-[56px] text-xl" variant="contained">Search by Title</Button>
               </Grid>
               <Grid size={6}>           
-              <Button className="bg-purple-900 w-full h-[56px] text-xl" variant="contained">Search by Category</Button>
+              <Button onClick={()=>{setSearchMetod("searchbycategory")}} className="bg-purple-900 w-full h-[56px] text-xl" variant="contained">Search by Category</Button>
               </Grid>
             </Grid>
             <ProductTable/>
@@ -101,5 +156,6 @@ function addNewProduct () {
         </Box>
       </Container>
     </div>
+    </handelEditeContext.Provider>
   );
 }
