@@ -4,6 +4,7 @@ import CrudsList from './CrudsList'
 import { createTheme } from '@mui/material/styles';
 import { purple } from '@mui/material/colors';
 import AllProvider from './AllContext';
+import CustomizedSnackbars from './Snackbar';
 
 function App() {
   const theme = createTheme({
@@ -19,11 +20,13 @@ function App() {
 
   return (
     <>
+    <CustomizedSnackbars>
     <AllProvider>
     <ThemeProvider theme={theme}>
      <CrudsList/>
      </ThemeProvider>
      </AllProvider>
+     </CustomizedSnackbars>
     </>
   )
 }

@@ -3,6 +3,8 @@ import TableRow from '@mui/material/TableRow';
 import Button from '@mui/material/Button';
 import { useCruds,useDispatch } from './AllContext';
 import { useHandelEdite } from './AllContext';
+import { useSnackbar } from './Snackbar';
+
 
 
 
@@ -10,12 +12,15 @@ export default function CrudsItem() {
     const crudsListItem  =useCruds()
     const dispatch = useDispatch()
     const editeProduct =useHandelEdite()
+    const handleClick = useSnackbar()
+
 
 
 
 
 function handelDelete(Id) {
 dispatch({type:"delete",payload:Id})
+handleClick("You delete a product")
 }
 
     const crudsList = crudsListItem.map((cruds)=>{

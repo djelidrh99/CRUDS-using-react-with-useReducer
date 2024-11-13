@@ -8,6 +8,8 @@ import  ProductTable from './Table'
 import { useState,useEffect } from "react";
 import { useDispatch } from "./AllContext";
 import { handelEditeContext } from "./AllContext";
+import { useSnackbar } from './Snackbar';
+
 
 
 export default function CrudsList() {
@@ -25,6 +27,8 @@ export default function CrudsList() {
     const [state,setState] =useState("Create")
 
     const dispatch = useDispatch()
+    const handleClick = useSnackbar()
+
     
     useEffect(()=>{
         if(localStorage.getItem("cruds")) {
@@ -44,6 +48,8 @@ function addNewProduct () {
                     discount:discountInput,
                     category:categoryInput
                    }})
+            handleClick("You add a new product")
+
             }
         }else {
             dispatch({type:"add",payload:{
@@ -54,6 +60,7 @@ function addNewProduct () {
                 discount:discountInput,
                 category:categoryInput
                }})
+               handleClick("You add a new product")
         }
     } else {
         dispatch({type:"update",payload:{
@@ -66,6 +73,7 @@ function addNewProduct () {
             updateId:updateId
            }})
            setState("Create")
+           handleClick("You update a product")
     }
    
 
